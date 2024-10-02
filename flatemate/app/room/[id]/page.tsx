@@ -16,6 +16,8 @@ import toast from 'react-hot-toast';
 export default function Component({params}:{params:{id:string}}) {
 
   const session=useSession();
+  console.log("session",session.data?.user.id);
+  
 
    const [roomData,setRoomData]=useState<roomType>();
     useEffect(()=>{
@@ -35,6 +37,7 @@ export default function Component({params}:{params:{id:string}}) {
 
 
     }
+    console.log('roomUserId',roomData?.userId);
   const [currentImage, setCurrentImage] = useState(0)
 
   const nextImage = () => {
@@ -145,7 +148,9 @@ export default function Component({params}:{params:{id:string}}) {
             </ul>
           </div>
 
-          <Button className="w-full" onClick={handleClick}>Book Now</Button>
+          {
+            session.data?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
+          }
         </CardContent>
       </Card>
     </div>
