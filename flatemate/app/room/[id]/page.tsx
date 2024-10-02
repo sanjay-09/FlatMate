@@ -149,7 +149,7 @@ export default function Component({params}:{params:{id:string}}) {
           </div>
 
           {
-            session.data?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
+            session?.data?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
           }
         </CardContent>
       </Card>
