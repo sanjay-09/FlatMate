@@ -129,7 +129,7 @@ const AddRoom=()=>{
     return(
         <div>
          <Dialog open={open} onOpenChange={setOpen}>
-  <DialogTrigger onClick={()=>setOpen(!open)}>Add Rooms</DialogTrigger>
+  <DialogTrigger onClick={()=>setOpen(!open)} className="border border-black bg-black p-2 text-white rounded-sm">Add Rooms</DialogTrigger>
   <DialogContent>
     <DialogHeader>
      {
