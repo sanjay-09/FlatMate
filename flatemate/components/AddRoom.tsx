@@ -9,7 +9,7 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 import { Input } from "./ui/input";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { roomType } from "@/app/global.types";
 import { supabase } from "@/app/Client/supabase";
 import { useRouter } from "next/navigation";
@@ -18,16 +18,17 @@ import { getInputType, initialRoomState } from "@/app/Utility";
 import ClipLoader from "react-spinners/ClipLoader";
 import toast from 'react-hot-toast';
 import { useSession } from "next-auth/react";
-
-const items=["location","contact","price","description","size"]
+import * as Z from "zod";
+import { roomSchema } from "@/app/Utility";
+import { items } from "@/app/Utility";
 
 const AddRoom=()=>{
     //varaible
-    
     const router=useRouter();
     const ans=useContext(AppContext);
     const [loading,setLoading]=useState(false);
     const session=useSession();
+    const [errors,setErrors]=useState<{[key:string]:string}>({})
 
     //state variables
     const [open,setOpen]=useState(false);
@@ -43,15 +44,19 @@ const AddRoom=()=>{
     const [room,setRoom]=useState<roomType>(initialRoomState);
 
 
-    //handleInputFunction
-    const handleChange=(e:any)=>{
+    //handleInputFunctiaon
+    const handleChange=async(e:any)=>{
         const {name,value,type}=e.target;
         setRoom({
             ...room,
             [name]:type==='number'?Number(value):value
         });
+       
+        
     }
+    
 
+    //files are saved to supabase 
     const handleFilesChange=async(e:any)=>{
         console.log("")
         //@ts-ignore
@@ -70,7 +75,7 @@ const AddRoom=()=>{
 
                 const { data:d, error:e } = await supabase.storage
                 .from('FlatMate')
-                .createSignedUrl(fileName, 36000)
+                .createSignedUrl(fileName, 100 * 365 * 24 * 60 * 60)
               
 
                 uploadedImageUrls.push(d?.signedUrl);
@@ -86,7 +91,9 @@ const AddRoom=()=>{
       
         
       }
+    
 
+    //checkbox
     const handleCheckbox=(idx:number)=>{
         const newData=[...amenities];
         newData[idx].checked=!newData[idx].checked;
@@ -96,6 +103,20 @@ const AddRoom=()=>{
 
     //Submit 
     const handleSubmit=async()=>{
+        const result=await roomSchema.safeParse({contact:room.contact,price:room.price,size:room.size,images:room.images.length})
+        if(!result.success){
+            const err=result.error.errors;
+            console.log("errors",err);
+            const obj: { [key: string]: string }={};
+            err.map((e,i)=>{
+                obj[`${e.path[0]}`] = e.message;
+
+            })
+            setErrors(obj);
+            toast.error("Please fill the correct detail in order to submit");
+            return;
+           
+        }
         setLoading(true);
       const newRoom={...room};
       for(let i=0;i<=amenities.length-1;i++){
@@ -115,7 +136,7 @@ const AddRoom=()=>{
         ans?.setRefresh(!ans.refresh);
         setLoading(false)
         setRoom(initialRoomState);
-        
+        setErrors({})
     
 
         
@@ -125,10 +146,20 @@ const AddRoom=()=>{
 
       }
 
+
+
+  //This useEffect is used only to empty the values when the dialog box closes
+    useEffect(()=>{
+        if(!open){
+            setErrors({});
+            setRoom(initialRoomState);
+        }
+
+    },[open])
      
     return(
         <div>
-         <Dialog open={open} onOpenChange={setOpen}>
+         <Dialog open={open} onOpenChange={setOpen}  >
   <DialogTrigger onClick={()=>setOpen(!open)} className="border border-black bg-black p-2 text-white rounded-sm">Add Rooms</DialogTrigger>
   <DialogContent>
     <DialogHeader>
@@ -138,6 +169,7 @@ const AddRoom=()=>{
                 <>
                  <DialogTitle className="text-sm">{item.toUpperCase()}</DialogTitle>
       <DialogDescription>
+       { errors[item] && <span className="text-red-300">*{errors[item]}</span>}
         <Input    type={getInputType(item)} name={item}    value={room[item as keyof roomType]?.toString() || ""} onChange={handleChange}/>
       </DialogDescription>
                 </>
@@ -176,10 +208,12 @@ const AddRoom=()=>{
     </DialogHeader>
 
     <DialogHeader>
+        {errors.images && <span className="text-red-300">{errors.images}</span>}
         <DialogTitle className="text-sm">
            ADD IMAGES(*Multiple images can be selected also)
            
         </DialogTitle>
+
         <DialogDescription>
         <input
         type="file"

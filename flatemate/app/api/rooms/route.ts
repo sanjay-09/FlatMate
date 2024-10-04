@@ -20,6 +20,7 @@ export const POST=async(req:NextRequest)=>{
    }
     catch(err){
         return NextResponse.json({
+            message:err
 
 
         },{
