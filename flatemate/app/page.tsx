@@ -13,9 +13,11 @@ import { roomType } from "./global.types";
 import Room from "@/components/Room"
 import AddRoom from "@/components/AddRoom";
 import { AppContext } from "./Context/AppContextProvider";
+import UserChat from "@/components/UserChat";
+import EnhancedMessageInbox from "@/components/UserChat2";
 
 export default function Component() {
-  const session=useSession();
+  const {data:session,status}=useSession();
   console.log("session",session);
   const ans=useContext(AppContext);
   console.log(ans);
@@ -27,6 +29,8 @@ export default function Component() {
 
 
   },[ans?.refresh]);
+
+
 
   const fetchData=async()=>{
     
@@ -95,7 +99,11 @@ export default function Component() {
           </div>
         </div>
       </main>
+
       <footer className="bg-muted text-muted-foreground py-4 px-4 md:px-6">
+       <div className="absolute">
+        {status==='authenticated' && <EnhancedMessageInbox session={session}/>}
+       </div>
         <div className="container mx-auto flex items-center justify-between">
           <p className="text-sm">&copy; 2024 Flatmates. All rights reserved.</p>
           <nav className="flex items-center gap-4">

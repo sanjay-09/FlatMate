@@ -10,13 +10,16 @@ import { Badge } from "@/components/ui/badge"
 import room from "@/db/Model/room"
 import { useSession } from "next-auth/react"
 import toast from 'react-hot-toast';
+import UserChat from "@/components/UserChat"
+import EnhancedMessageInbox from "@/components/UserChat2"
 
 
 
 export default function Component({params}:{params:{id:string}}) {
+ 
 
-  const session=useSession();
-  console.log("session",session.data?.user.id);
+  const {data:session,status}=useSession();
+ 
   
 
    const [roomData,setRoomData]=useState<roomType>();
@@ -52,7 +55,7 @@ export default function Component({params}:{params:{id:string}}) {
   const handleClick=async()=>{
     const payload={
       renterId:typeof roomData?.userId === 'object' && roomData?.userId._id,
-      takerId:session?.data?.user.id,
+      takerId:session?.user.id,
       roomId:roomData?._id,
         
     }
@@ -69,6 +72,8 @@ export default function Component({params}:{params:{id:string}}) {
     }
     
   }
+
+
  
   return (
     <div className="w-full md:w-2/4 mx-auto p-4">
@@ -149,10 +154,18 @@ export default function Component({params}:{params:{id:string}}) {
           </div>
 
           {
-            session?.data?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
+            session?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
           }
         </CardContent>
       </Card>
+      <div className="absolute right-1">
+      {status==='authenticated' &&   <UserChat userId={session?.user.id} receiverId={typeof roomData?.userId === 'object' && roomData?.userId._id} ChatOpen={false}/>}
+{/* { status==="authenticated" &&  <EnhancedMessageInbox session={session}/>} */}
+     
+        
+
+      </div>
+   
     </div>
   )
 }
