@@ -26,6 +26,7 @@ app.prepare().then(() => {
       console.log(`User ${userId} connected with socket ID: ${socket.id}`);
     });
     socket.on("sendMessage",async({ id,message,senderId,receiverId})=>{
+      console.log("sennnnn");
       await connect();
 
       if(!senderId ||!receiverId){
@@ -51,7 +52,8 @@ app.prepare().then(() => {
       message
 
     })
-    console.log("newMessage",newMessage);
+    const ids=newMessage._id;
+    console.log("newMessage--------------------",newMessage);
     conversationPresent.lastMessage=message;
     conversationPresent.updatedAt=new Date();
     await conversationPresent.save();
@@ -61,8 +63,9 @@ app.prepare().then(() => {
       receiverId=users[receiverId];
       console.log("---instance",users);
       if(receiverId){
-      
-        io.to(receiverId).emit("receiveMessage",{senderId,message});
+        console.log("receiverrrIddd",receiverId,users[receiverId]);
+        //@ts
+        io.to(receiverId).emit("receiveMessage",{senderId,message,ids});
       }
     })
   });

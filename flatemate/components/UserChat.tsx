@@ -4,10 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import io from "socket.io-client";
-
-const socket = io("http://localhost:3000");
-interface Message {
+import {socket} from "@/app/Client/socket"
+export interface Message {
   
   id: number;
   message: string;

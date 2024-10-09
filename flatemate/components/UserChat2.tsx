@@ -6,8 +6,10 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { MessageSquare, Send, X } from 'lucide-react'
 import { user } from '@/app/global.types'
+import { useSession } from 'next-auth/react'
+import { UserChat3 } from './UserChat3'
 
-export interface Message {
+export interface MessageEnhanced {
   id: string;
   name: string;
   avatar: string;
@@ -19,9 +21,10 @@ export interface Message {
 
 export default function EnhancedMessageInbox({session}:{session:any}) {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<Message | null>(null)
+  const [selectedUser, setSelectedUser] = useState<MessageEnhanced | null>(null)
   const [chatInput, setChatInput] = useState('')
-  const [messages,setMessages]=useState<Message[]>([]);
+  const [messages,setMessages]=useState<MessageEnhanced[]>([]);
+
 
 
   useEffect(()=>{
@@ -56,7 +59,9 @@ export default function EnhancedMessageInbox({session}:{session:any}) {
 
       })
       setMessages(newMessage);
-   
+
+      
+     console.log("seesion in userCh2",session.user.id);
       console.log("newMessage",newMessage);
 
 
@@ -68,7 +73,7 @@ export default function EnhancedMessageInbox({session}:{session:any}) {
 
   const toggleInbox = () => setIsOpen(!isOpen)
 
-  const openChat = (user: Message) => {
+  const openChat = (user: MessageEnhanced) => {
     setSelectedUser(user)
   }
 
@@ -88,41 +93,7 @@ export default function EnhancedMessageInbox({session}:{session:any}) {
     <div className="fixed bottom-4 right-4 flex items-end space-x-4">
       <div className="flex space-x-4">
         {selectedUser && (
-          <Card className="w-80 h-[500px] flex flex-col">
-            <CardHeader className="bg-gray-100 px-4 py-3 border-b flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
-                  <AvatarFallback>{selectedUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                </Avatar>
-                <h3 className="text-lg font-semibold text-gray-800">{selectedUser.name}</h3>
-              </div>
-              <Button variant="ghost" size="icon" onClick={closeChat}>
-                <X className="h-4 w-4" />
-              </Button>
-            </CardHeader>
-            <ScrollArea className="flex-grow p-4">
-              <div className="space-y-4">
-                <div className="bg-gray-100 p-2 rounded-lg max-w-[80%]">
-                  <p className="text-sm">{selectedUser.message}</p>
-                </div>
-              </div>
-            </ScrollArea>
-            <CardFooter className="border-t p-4">
-              <form onSubmit={sendMessage} className="flex w-full space-x-2">
-                <Input
-                  type="text"
-                  placeholder="Type a message..."
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-grow"
-                />
-                <Button type="submit" size="icon">
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
-            </CardFooter>
-          </Card>
+          <UserChat3 selectedUser={selectedUser} userId={session.user.id} closeChat={closeChat}/>
         )}
         {isOpen && (
           <Card className="w-80 h-[500px] flex flex-col">

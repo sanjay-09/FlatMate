@@ -15,27 +15,29 @@ export const GET=async(req:NextRequest)=>{
         }
     })
 
+    console.log("isConversationPresent",isConversationPresent);
     const newConversation:{senderId:string | null,receiverId:string,message:string,updatedAt:Date}[]=isConversationPresent.map((obj)=>{
         return {
-            senderId:userId,
-            receiverId:obj.participants[0]===userId?obj.participants[1]:obj.participants[0],
+            senderId:userId,  //97
+            receiverId:obj.participants[0]==userId?obj.participants[1]:obj.participants[0],  //89
             message:obj.lastMessage,
             updatedAt:obj.updatedAt
         }
     })
+    console.log("ddd-->",newConversation);
     const usersData=[];
    try{
     for(let i=0;i<=newConversation.length-1;i++){
         const { senderId, receiverId } = newConversation[i];
-        
+                //97       //89
         const [response1,response2]=await Promise.all([
             await user.findById(senderId!),await user.findById(receiverId)
         ])
         usersData.push({
-            senderId,
-            receiverId,
-            senderUserData:response1,
-            receiverUserData:response2,
+            senderId,  //97 
+            receiverId,  //89
+            senderUserData:response1,  //97 
+            receiverUserData:response2,  //89
             message:newConversation[i].message,
             updatedAt:newConversation[i].updatedAt
           
