@@ -6,13 +6,15 @@ export const GET=async(req:NextRequest)=>{
     const {searchParams}=new URL(req.url);
     const userId=searchParams.get("userId");
     const receiverId=searchParams.get("receiverId");
+    console.log("userr->>",userId,receiverId);
     try{
         await connect();
-        const isConversationPresent=await conversation.find({
+        const isConversationPresent=await conversation.findOne({
             participants:{
                 $all:[userId,receiverId]
             }
         })
+        console.log("isConversationPresent",isConversationPresent);
       
         if(!isConversationPresent){
             return NextResponse.json({
@@ -44,6 +46,7 @@ export const GET=async(req:NextRequest)=>{
 
     }
     catch(err){
+        console.log(err);
         return NextResponse.json({
             message:"Not able to connect to the db"
         },{

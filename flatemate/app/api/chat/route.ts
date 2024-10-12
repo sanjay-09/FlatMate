@@ -14,17 +14,29 @@ export const GET=async(req:NextRequest)=>{
             $in:[userId]
         }
     })
-
     console.log("isConversationPresent",isConversationPresent);
-    const newConversation:{senderId:string | null,receiverId:string,message:string,updatedAt:Date}[]=isConversationPresent.map((obj)=>{
-        return {
-            senderId:userId,  //97
-            receiverId:obj.participants[0]==userId?obj.participants[1]:obj.participants[0],  //89
-            message:obj.lastMessage,
-            updatedAt:obj.updatedAt
-        }
-    })
-    console.log("ddd-->",newConversation);
+
+
+    
+
+    const newConversation: { senderId: string | null, receiverId: string, message: string, updatedAt: Date,count:Number }[] = 
+    await Promise.all(isConversationPresent.map(async (obj) => {
+      const data = await messagedb.countDocuments({
+        conversationId: obj,
+        read: false
+      });
+  
+      return {
+        senderId: userId,  //97
+        receiverId: obj.participants[0] == userId ? obj.participants[1] : obj.participants[0],  //89
+        message: obj.lastMessage,
+        updatedAt: obj.updatedAt,
+        count:data
+      };
+  }));
+
+  console.log("newConversation",newConversation);
+  
     const usersData=[];
    try{
     for(let i=0;i<=newConversation.length-1;i++){
@@ -39,7 +51,8 @@ export const GET=async(req:NextRequest)=>{
             senderUserData:response1,  //97 
             receiverUserData:response2,  //89
             message:newConversation[i].message,
-            updatedAt:newConversation[i].updatedAt
+            updatedAt:newConversation[i].updatedAt,
+            count:newConversation[i].count
           
 
         })

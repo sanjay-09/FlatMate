@@ -4,14 +4,16 @@ import { useState,useEffect } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, Wifi, Tv, Coffee, Utensils, IndianRupee, Ruler, Users, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card"
 import { roomType } from "@/app/global.types"
 import { Badge } from "@/components/ui/badge"
 import room from "@/db/Model/room"
 import { useSession } from "next-auth/react"
 import toast from 'react-hot-toast';
 import UserChat from "@/components/UserChat"
-import EnhancedMessageInbox from "@/components/UserChat2"
+import EnhancedMessageInbox, { MessageEnhanced } from "@/components/UserChat2"
+import { UserChat3 } from "@/components/UserChat3"
+import { socket } from "@/app/Client/socket"
 
 
 
@@ -19,14 +21,22 @@ export default function Component({params}:{params:{id:string}}) {
  
 
   const {data:session,status}=useSession();
+  const [receiverId,setReceiver]=useState<MessageEnhanced>({
+    id:"",
+    name:"",
+    avatar:""
+  })
+  const [openChat,setOpenChat]=useState(true);
  
   
 
    const [roomData,setRoomData]=useState<roomType>();
     useEffect(()=>{
+       if(status==='authenticated'){
         fetchData();
+       }
 
-    },[params.id]);
+    },[params.id,status]);
     const fetchData=async()=>{
         const data=await fetch(`/api/rooms/roomId?id=${params.id}`);
         if(!data.ok){
@@ -36,6 +46,12 @@ export default function Component({params}:{params:{id:string}}) {
         const response=await data.json();
         console.log("response",response);
         setRoomData(response.data);
+        setReceiver({
+          id: response.data.userId._id,
+          name:response.data.userId.name,
+          avatar: 'http://placeholder.svg/?height=40&width=40',
+
+        })
        
 
 
@@ -71,6 +87,10 @@ export default function Component({params}:{params:{id:string}}) {
 
     }
     
+  }
+  const closeChat=()=>{
+    setOpenChat(false);
+
   }
 
 
@@ -157,14 +177,25 @@ export default function Component({params}:{params:{id:string}}) {
             session?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <Button className="w-full" onClick={handleClick}>Book Now</Button>
           }
         </CardContent>
+        {
+          status==='authenticated' &&  session?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <CardFooter>
+          <div className="absolute right-1 bottom-0">
+            {!openChat && <Button onClick={()=>{
+              setOpenChat(true);
+            }}>Open Chat</Button> }
+        
+    
+       {status==='authenticated' &&  openChat && receiverId.id.length>0 &&  <UserChat3 userId={session?.user.id} selectedUser={receiverId} closeChat={closeChat} />}
+       </div>
+       </CardFooter>
+        }
       </Card>
-      <div className="absolute right-1">
-      {status==='authenticated' &&   <UserChat userId={session?.user.id} receiverId={typeof roomData?.userId === 'object' && roomData?.userId._id} ChatOpen={false}/>}
+      
 {/* { status==="authenticated" &&  <EnhancedMessageInbox session={session}/>} */}
      
         
 
-      </div>
+     
    
     </div>
   )

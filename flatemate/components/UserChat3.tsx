@@ -9,54 +9,67 @@ import { Message } from "./UserChat"
 import { useEffect, useState } from "react"
 import {socket} from "@/app/Client/socket"
 import messagedb from "@/db/Model/Message"
+import toast from "react-hot-toast"
 
 export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnhanced,userId:string,closeChat:()=>void})=>{
+
+  console.log("userChat3",userId,selectedUser.id);
     const [chatInput,setChatInput]=useState<string>("");
     const [messages,setMessages]=useState<Message[]>([]);
-    console.log("pt",messages);
+  
+
+    const handleReceiveMessage = ({ senderId, message, ids }: { senderId: string, message: string, ids: string[] }) => {
+      console.log("messageReceived---->", ids);
+  
+      fetch("/api/chat/updateFlag", {
+        method: "POST",
+        body: JSON.stringify({ id: ids })
+      });
+  
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          message: message,
+          senderId: senderId,
+          isSender: 'other'
+        }
+      ]);
+    };
+  
 
     useEffect(()=>{
-        console.log("usee------------->");
-        socket.emit("join",userId);
-        socket.on("receiveMessage",({senderId,message,id})=>{
-          console.log("messageReceived---->");
-
-
-
-            setMessages((prev)=>{
-                return [
-                    ...prev,
-                    {
-                        id:Date.now(),
-                        message:message,
-                        senderId:senderId,
-                        isSender:'other'
-                    }
-                ]
-            })
-            console.log(messages);
-
-        });
+       
+        // socket.emit("join",userId);
+        console.log("userId====>",userId);
+        socket.on("receiveMessage", handleReceiveMessage);
         fetchData();
 
         return ()=>{
-          
+          socket.off("receiveMessage",handleReceiveMessage);
         }
 
+       
     },[]);
     
     
     const fetchData=async()=>{
+      console.log("fetchData",selectedUser.id);
 
-        const data=await fetch(`api/chat/user?userId=${userId}&receiverId=${selectedUser.id}`);
-        if(!data.ok){
+        try{
+          const [data1,data2]=await Promise.all([await fetch(`/api/chat/user?userId=${userId}&receiverId=${selectedUser.id}`),await fetch(`/api/chat/updateFlag/all?userId=${userId}&receiverId=${selectedUser.id}`)]);
+        if(!data1.ok){
+          toast.error("first time chatting with the user");
             return;
 
         }
-        const response=await data.json();
-        console.log("response--------->",response)
+        const response=await data1.json();
         setMessages(response.messages);
 
+        }
+        catch(error){
+          console.log("faileed");
+        }
     }
 
   

@@ -22,7 +22,9 @@ app.prepare().then(() => {
     console.log("user connected",socket.id);
 
     socket.on("join",(userId)=>{
-      users[userId]=socket.id
+
+      users[userId]=socket.id;
+      console.log("-------users======",users);
       console.log(`User ${userId} connected with socket ID: ${socket.id}`);
     });
     socket.on("sendMessage",async({ id,message,senderId,receiverId})=>{
@@ -53,6 +55,7 @@ app.prepare().then(() => {
 
     })
     const ids=newMessage._id;
+  
     console.log("newMessage--------------------",newMessage);
     conversationPresent.lastMessage=message;
     conversationPresent.updatedAt=new Date();
@@ -66,6 +69,7 @@ app.prepare().then(() => {
         console.log("receiverrrIddd",receiverId,users[receiverId]);
         //@ts
         io.to(receiverId).emit("receiveMessage",{senderId,message,ids});
+        io.to(receiverId).emit("rcu","ok");
       }
     })
   });
