@@ -36,6 +36,7 @@ export const POST=async(req:NextRequest)=>{
                <p>Hi there,</p>
                <p>Somebody is  interested on your property,If you want to approve the request please login to the flatmate.:</p>
                <p>Thank you,</p>
+               <a href=${process.env.NEXT_PUBLIC_URL}>Click Please</a>
                <p><strong>Your Team</strong></p>`, // HTML body content
       };
 

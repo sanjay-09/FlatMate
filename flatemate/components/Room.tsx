@@ -5,7 +5,7 @@ import { roomType } from "@/app/global.types";
 const Room=({room}:{room:roomType})=>{
     return(
         <div>
-            <Card className="sm:h-[400px] h-[450px]">
+            <Card className=" sm:h-[400px]">
               <img
                 src={room?.images[0]}
                 width={400}

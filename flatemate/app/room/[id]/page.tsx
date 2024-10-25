@@ -179,13 +179,13 @@ export default function Component({params}:{params:{id:string}}) {
         </CardContent>
         {
           status==='authenticated' &&  session?.user.id!==(typeof roomData?.userId === 'object' && roomData.userId._id) && <CardFooter>
-          <div className="absolute right-1 bottom-0">
+          <div className="right-1 bottom-0">
             {!openChat && <Button onClick={()=>{
               setOpenChat(true);
             }}>Open Chat</Button> }
         
     
-       {status==='authenticated' &&  openChat && receiverId.id.length>0 &&  <UserChat3 userId={session?.user.id} selectedUser={receiverId} closeChat={closeChat} />}
+       {status==='authenticated' &&  openChat && receiverId.id.length>0 &&  <div className="absolute right-0 bottom-0"><UserChat3 userId={session?.user.id} selectedUser={receiverId} closeChat={closeChat}/></div>}
        </div>
        </CardFooter>
         }

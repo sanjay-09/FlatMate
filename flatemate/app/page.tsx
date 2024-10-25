@@ -41,7 +41,34 @@ export default function Component() {
     }
     const data=await response.json();
     console.log("data",data);
+    data.data.sort((a:roomType,b:roomType)=>{
+      return a.price-b.price
+
+    });
     setRoomData(data.data);
+
+  }
+
+  const handleFilter=(type:string)=>{
+    const newData=[...roomData];
+    if(type==="price"){
+     
+      newData.sort((a:roomType,b:roomType)=>{
+        return a.price-b.price
+
+      })
+
+
+    }
+    else{
+      newData.sort((a:roomType,b:roomType)=>{
+        return a.size-b.size
+
+      })
+    
+
+    }
+    setRoomData(newData);
 
   }
   return (
@@ -55,34 +82,18 @@ export default function Component() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-2">
                   <CiFilter />
-                    <span>Filter</span>
+                    <span>Sort</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Filter by:</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuCheckboxItem checked>Price</DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>Bedrooms</DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>Amenities</DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem onClick={()=>{handleFilter("price")}} >Price</DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem onClick={()=>{handleFilter("bedroom")}}>Bedrooms</DropdownMenuCheckboxItem>
+                 
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2">
-                  <CiBoxList />
-                    <span>Sort</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuLabel>Sort by:</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioGroup value="price">
-                    <DropdownMenuRadioItem value="price">Price</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="bedrooms">Bedrooms</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="date">Date Listed</DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            
             </div>
             
           <AddRoom/>

@@ -19,101 +19,82 @@ export interface MessageEnhanced {
   count?:Number
 }
 
-
-
-export default function EnhancedMessageInbox({session}:{session:any}) {
+export default function EnhancedMessageInbox({ session }: { session: any }) {
   console.log("Enhanced");
   const [isOpen, setIsOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<MessageEnhanced | null>(null)
   const [chatInput, setChatInput] = useState('')
-  const [messages,setMessages]=useState<MessageEnhanced[]>([]);
+  const [messages, setMessages] = useState<MessageEnhanced[]>([]);
 
-
-
-  useEffect(()=>{
-    socket.emit("join",session.user.id);
+  useEffect(() => {
+    socket.emit("join", session.user.id);
     fetchData();
-    socket.on("rcu",()=>{
+    socket.on("rcu", () => {
       console.log("rcu");
       fetchData();
-
     });
 
-  },[]);
+  }, []);
 
-  const fetchData=async()=>{
-    console.log("session2",session);
-    const data=await fetch(`api/chat?userId=${session.user.id}`);
-    if(!data.ok){
-       return;
-     
+  const fetchData = async () => {
+    console.log("session2", session);
+    const data = await fetch(`api/chat?userId=${session.user.id}`);
+    if (!data.ok) {
+      return;
     }
-    const response=await data.json();
-    if(response.length>0){
-      console.log("resp",response.usersData);
-       
+    const response = await data.json();
+    if (response.length > 0) {
+      console.log("resp", response.usersData);
 
-     const newMessage=response.usersData.map((obj:{receiverUserData:user,message:string,updatedAt:string,count:Number})=>{
-      const {receiverUserData,message,updatedAt,count}=obj;
-      const isoString =updatedAt ;
-      const dateOnly = isoString.split("T")[0];
+      const newMessage = response.usersData.map((obj: { receiverUserData: user, message: string, updatedAt: string, count: Number }) => {
+        const { receiverUserData, message, updatedAt, count } = obj;
+        const isoString = updatedAt;
+        const dateOnly = isoString.split("T")[0];
         return {
-          id:receiverUserData._id,
-          name:receiverUserData.name,
-          avatar:'http://placeholder.svg/?height=40&width=40',
+          id: receiverUserData._id,
+          name: receiverUserData.name,
+          avatar: 'http://placeholder.svg/?height=40&width=40',
           message,
-          date:dateOnly,
+          date: dateOnly,
           count
-  
         }
-
       })
       setMessages(newMessage);
-
-
-     
-    
-
     }
   }
 
   const toggleInbox = () => setIsOpen(!isOpen)
 
-  const openChat = (user: MessageEnhanced,i:number) => {
+  const openChat = (user: MessageEnhanced, i: number) => {
     setSelectedUser(user);
-    const newMessages=[...messages];
-    newMessages[i].count=0;
+    const newMessages = [...messages];
+    newMessages[i].count = 0;
     setMessages(newMessages)
-
-
-   
-    
   }
 
   const closeChat = () => {
     setSelectedUser(null)
   }
 
- 
-
   return (
     <div className="fixed bottom-4 right-4 flex items-end space-x-4">
       <div className="flex space-x-4">
         {selectedUser && (
-          <UserChat3 selectedUser={selectedUser} userId={session.user.id} closeChat={closeChat}/>
+          <UserChat3 selectedUser={selectedUser} userId={session.user.id} closeChat={closeChat} />
         )}
         {isOpen && (
-          <Card className="w-80 h-[500px] flex flex-col">
+          <Card className={`w-80 h-[500px] flex flex-col ${selectedUser ? 'hidden sm:flex' : ''}`}>
+            {/* The component is hidden on small screens when `selectedUser` is true */}
             <CardHeader className="bg-gray-100 px-4 py-3 border-b">
               <h2 className="text-lg font-semibold text-gray-800">Messages</h2>
             </CardHeader>
             <ScrollArea className="flex-grow">
               <CardContent className="divide-y p-0">
-                {messages.map((message,i) => (
+                {messages.map((message, i) => (
                   <div
                     key={message.id}
                     className="flex items-center space-x-2 px-2 py-3 hover:bg-gray-50 transition-colors duration-150 ease-in-out cursor-pointer"
-                    onClick={() => openChat(message,i)}
+                    onClick={() => openChat(message, i)}
                   >
                     <Avatar className="flex-shrink-0 w-8 h-8">
                       <AvatarImage src={message.avatar} alt={message.name} />
@@ -124,9 +105,9 @@ export default function EnhancedMessageInbox({session}:{session:any}) {
                         <p className="text-sm font-medium text-gray-900 truncate">{message.name}</p>
                         <span className="text-xs text-gray-400 flex-shrink-0">{message.date}</span>
                       </div>
-                     {//@ts-ignore
-                      <p className="text-sm text-gray-500 truncate">{message.message} {!selectedUser && message?.count!>0  && <span className='absolute rounded-md right-2 border bg-green-500 px-2 text-white '>{message.count!}</span>}</p>
-                     }
+                      {//@ts-ignore
+                        <p className="text-sm text-gray-500 truncate">{message.message} {!selectedUser && message?.count! > 0 && <span className='absolute rounded-md right-2 border bg-green-500 px-2 text-white '>{message.count!}</span>}</p>
+                      }
                     </div>
                   </div>
                 ))}

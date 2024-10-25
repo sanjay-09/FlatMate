@@ -15,9 +15,9 @@ const Header=()=>{
 
    
     return(
-        <header className="bg-primary text-primary-foreground py-6 px-4 md:px-6">
+        <header className="bg-gray-700 py-6 px-4 md:px-6">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold" prefetch={false}>
+          <Link href="/" className="text-2xl font-bold italic text-white" prefetch={false}>
             FLATMATE
           </Link>
           <div className="flex items-center gap-4">
