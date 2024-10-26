@@ -1,5 +1,4 @@
 import { createServer } from "node:http";
-import next from "next";
 import { Server } from "socket.io";
 import conversation from "./db/Model/Conversation.js";
 import { connect } from "./db/index.js";
