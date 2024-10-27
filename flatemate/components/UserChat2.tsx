@@ -77,8 +77,8 @@ export default function EnhancedMessageInbox({ session }: { session: any }) {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 flex items-end space-x-4">
-      <div className="flex space-x-4">
+    <div className="fixed bottom-4 right-4 sm:right-2 flex items-end space-x-4">
+      <div className="flex space-x-4 sm:pl-24">
         {selectedUser && (
           <UserChat3 selectedUser={selectedUser} userId={session.user.id} closeChat={closeChat} />
         )}
