@@ -83,7 +83,7 @@ export default function EnhancedMessageInbox({ session }: { session: any }) {
           <UserChat3 selectedUser={selectedUser} userId={session.user.id} closeChat={closeChat} />
         )}
         {isOpen && (
-          <Card className={`w-80 h-[500px] flex flex-col ${selectedUser ? 'hidden sm:flex' : ''}`}>
+          <Card className={`w-80 h-[500px] flex flex-col pl-6 ${selectedUser ? 'hidden sm:flex' : ''}`}>
             {/* The component is hidden on small screens when `selectedUser` is true */}
             <CardHeader className="bg-gray-100 px-4 py-3 border-b">
               <h2 className="text-lg font-semibold text-gray-800">Messages</h2>

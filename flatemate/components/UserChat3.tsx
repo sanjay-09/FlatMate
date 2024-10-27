@@ -40,7 +40,7 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
 
     useEffect(()=>{
        
-        // socket.emit("join",userId);
+       
         console.log("userId====>",userId);
         socket.on("receiveMessage", handleReceiveMessage);
         fetchData();
@@ -93,7 +93,7 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
 
     }
     return(
-        <Card className="w-[350px] h-[500px] flex flex-col">
+        <Card className="w-[350px] h-[500px] pl-10 flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 bg-green-500 text-white">
         <div className="flex items-center space-x-2 ">
           <Avatar className="h-8 w-8 text-center">
