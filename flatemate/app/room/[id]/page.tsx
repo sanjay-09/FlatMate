@@ -20,6 +20,8 @@ import { socket } from "@/app/Client/socket"
 export default function Component({params}:{params:{id:string}}) {
  
 
+  console.log("In the room Component---->")
+
   const {data:session,status}=useSession();
   const [receiverId,setReceiver]=useState<MessageEnhanced>({
     id:"",
@@ -37,14 +39,16 @@ export default function Component({params}:{params:{id:string}}) {
        }
 
     },[params.id,status]);
+
     const fetchData=async()=>{
+      const start=Date.now();
         const data=await fetch(`/api/rooms/roomId?id=${params.id}`);
         if(!data.ok){
             return;
         }
 
         const response=await data.json();
-        console.log("response",response);
+        const end=Date.now();
         setRoomData(response.data);
         setReceiver({
           id: response.data.userId._id,
@@ -53,10 +57,13 @@ export default function Component({params}:{params:{id:string}}) {
 
         })
        
+        const duration = end - start;
+        console.log("duration",duration)
+       
 
 
     }
-    console.log('roomUserId',roomData?.userId);
+
   const [currentImage, setCurrentImage] = useState(0)
 
   const nextImage = () => {
@@ -75,7 +82,7 @@ export default function Component({params}:{params:{id:string}}) {
       roomId:roomData?._id,
         
     }
-    console.log("payload",payload);
+   
     const data=await fetch("/api/rooms/matched",{
       method:"POST",
       body:JSON.stringify(payload)

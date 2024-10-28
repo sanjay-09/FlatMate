@@ -20,7 +20,8 @@ export interface MessageEnhanced {
 }
 
 export default function EnhancedMessageInbox({ session }: { session: any }) {
-  console.log("Enhanced");
+    console.log("Enhanced--->4")
+  
   const [isOpen, setIsOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<MessageEnhanced | null>(null)
   const [chatInput, setChatInput] = useState('')
@@ -30,22 +31,21 @@ export default function EnhancedMessageInbox({ session }: { session: any }) {
     socket.emit("join", session.user.id);
     fetchData();
     socket.on("rcu", () => {
-      console.log("rcu");
+   
       fetchData();
     });
 
   }, []);
 
   const fetchData = async () => {
-    console.log("session2", session);
+   
     const data = await fetch(`api/chat?userId=${session.user.id}`);
     if (!data.ok) {
       return;
     }
     const response = await data.json();
     if (response.length > 0) {
-      console.log("resp", response.usersData);
-
+     
       const newMessage = response.usersData.map((obj: { receiverUserData: user, message: string, updatedAt: string, count: Number }) => {
         const { receiverUserData, message, updatedAt, count } = obj;
         const isoString = updatedAt;

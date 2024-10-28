@@ -17,14 +17,15 @@ import UserChat from "@/components/UserChat";
 import EnhancedMessageInbox from "@/components/UserChat2";
 
 export default function Component() {
+  console.log("c1----test---2");
   const {data:session,status}=useSession();
-  console.log("session",session);
+
   const ans=useContext(AppContext);
-  console.log(ans);
+  
   const [roomData,setRoomData]=useState<roomType[] | []>([]);
 
   useEffect(()=>{ 
-    console.log("fetch");
+   
     fetchData();
 
 
@@ -40,7 +41,7 @@ export default function Component() {
 
     }
     const data=await response.json();
-    console.log("data",data);
+  
     data.data.sort((a:roomType,b:roomType)=>{
       return a.price-b.price
 
@@ -96,13 +97,15 @@ export default function Component() {
             
             </div>
             
-          <AddRoom/>
+     {
+      status==='authenticated' && <AddRoom/>
+     }
           
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {
             roomData.length>0 && roomData.map((room,idx)=>{
-              return <Link href={`/room/${room._id}`}><Room room={room}/></Link>
+              return <Link href={`/room/${room._id}`}><Room key={idx} room={room}/></Link>
 
             })
 

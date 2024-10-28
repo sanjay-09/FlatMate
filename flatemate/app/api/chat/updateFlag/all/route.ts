@@ -5,6 +5,7 @@ import { connect } from "@/db";
 
 export const GET=async(req:NextRequest)=>{
     try{
+        const start=Date.now();
         const {searchParams}=new URL(req.url);
         const userId=searchParams.get("userId");
         const receiverId=searchParams.get("receiverId");
@@ -19,10 +20,11 @@ export const GET=async(req:NextRequest)=>{
         //@ts-ignore
        
        const all= await messagedb.updateMany({conversationId:conversationIdPresent,read:false},{$set:{read:true}});
-
+       const end=Date.now();
+       console.log("d",end-start);
         return NextResponse.json({
             message:"Successfully update the read count",
-            all
+            
         },{
             status:200
         })

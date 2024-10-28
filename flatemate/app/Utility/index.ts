@@ -30,3 +30,22 @@ export const roomSchema=Z.object({
 })
 
 export const items=["location","contact","price","description","size"]
+
+
+type renderPhase={
+  id:string,
+  phase:string,
+  actualDuration:string
+}
+
+export function onRenderCallback( 
+  id: string, // The id prop of the Profiler tree that has just committed
+  phase: "mount" | "update", // Mount (initial render) or Update (re-render)
+  actualDuration: number, // Time spent rendering the committed update
+  baseDuration: number, // Estimate of time to render the entire subtree
+  startTime: number, // When React began rendering this update
+  commitTime: number, // When React committed this update
+  interactions: Set<any> // Set of interactions for the render
+  ) {
+  console.log(`Component: ${id}, Render phase: ${phase}, Render time: ${actualDuration} ms`);
+}

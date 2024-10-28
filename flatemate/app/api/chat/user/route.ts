@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import conversation from "@/db/Model/Conversation";
 import messagedb from "@/db/Model/Message";
 export const GET=async(req:NextRequest)=>{
+    const start=Date.now();
     const {searchParams}=new URL(req.url);
     const userId=searchParams.get("userId");
     const receiverId=searchParams.get("receiverId");
@@ -27,7 +28,7 @@ export const GET=async(req:NextRequest)=>{
             conversationId:isConversationPresent
 
         })
-        console.log("mm->",messages);
+      
         const newMessages=messages.map((m)=>{
             return {
                 id:m.updatedAt,
@@ -37,11 +38,13 @@ export const GET=async(req:NextRequest)=>{
                 read:m.read
             }
         });
+        const end=Date.now();
+        console.log("duration",end-start);
 
         return NextResponse.json({
-            message:"Able to fetch the data",
-            conversationData:isConversationPresent,
             messages:newMessages
+        },{
+            status:200
         })
 
     }

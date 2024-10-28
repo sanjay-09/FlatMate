@@ -4,9 +4,10 @@ import { useEffect } from "react";
 
 const Header=()=>{
     const { data: session, status }=useSession();
-    console.log("Session",session);
+    console.log("Session----->1",session);
 
     useEffect(()=>{
+      console.log("status------------>",status);
       if(status==='unauthenticated'){
         signIn();
       }

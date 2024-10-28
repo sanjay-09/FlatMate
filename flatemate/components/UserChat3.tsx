@@ -13,14 +13,13 @@ import toast from "react-hot-toast"
 
 export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnhanced,userId:string,closeChat:()=>void})=>{
 
-  console.log("userChat3",userId,selectedUser.id);
+    console.log("userChat=====2");
     const [chatInput,setChatInput]=useState<string>("");
     const [messages,setMessages]=useState<Message[]>([]);
   
 
     const handleReceiveMessage = ({ senderId, message, ids }: { senderId: string, message: string, ids: string[] }) => {
-      console.log("messageReceived---->", ids);
-  
+    
       fetch("/api/chat/updateFlag", {
         method: "POST",
         body: JSON.stringify({ id: ids })
@@ -41,7 +40,7 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
     useEffect(()=>{
        
        
-        console.log("userId====>",userId);
+       
         socket.on("receiveMessage", handleReceiveMessage);
         fetchData();
 
@@ -54,16 +53,21 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
     
     
     const fetchData=async()=>{
-      console.log("fetchData",selectedUser.id);
+     
 
         try{
+          const start=Date.now();
           const [data1,data2]=await Promise.all([await fetch(`/api/chat/user?userId=${userId}&receiverId=${selectedUser.id}`),await fetch(`/api/chat/updateFlag/all?userId=${userId}&receiverId=${selectedUser.id}`)]);
+          const end=Date.now();
         if(!data1.ok){
           toast.error("first time chatting with the user");
             return;
 
         }
+
+        console.log("duration 2",end-start);
         const response=await data1.json();
+        
         setMessages(response.messages);
 
         }
@@ -85,7 +89,7 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
             isSender:'user'
         }
 
-       console.log("Message----------",newMessage);
+      
 
      socket.emit("sendMessage",newMessage);
        setMessages([...messages,newMessage])
@@ -93,7 +97,7 @@ export const UserChat3=({selectedUser,userId,closeChat}:{selectedUser:MessageEnh
 
     }
     return(
-        <Card className="w-[350px] h-[500px] sm:pl-24 flex flex-col">
+        <Card className="w-[350px] h-[500px] sm:ml-0 ml-24 flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 bg-green-500 text-white">
         <div className="flex items-center space-x-2 ">
           <Avatar className="h-8 w-8 text-center">

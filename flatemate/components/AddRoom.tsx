@@ -23,6 +23,8 @@ import { roomSchema } from "@/app/Utility";
 import { items } from "@/app/Utility";
 
 const AddRoom=()=>{
+     console.log("child Component------3")
+    
     //varaible
     const router=useRouter();
     const ans=useContext(AppContext);
@@ -58,7 +60,7 @@ const AddRoom=()=>{
 
     //files are saved to supabase 
     const handleFilesChange=async(e:any)=>{
-        console.log("")
+       
         //@ts-ignore
         const uploadedImageUrls=[];
       
@@ -151,6 +153,7 @@ const AddRoom=()=>{
   //This useEffect is used only to empty the values when the dialog box closes
     useEffect(()=>{
         if(!open){
+            console.log("inside if");
             setErrors({});
             setRoom(initialRoomState);
         }
